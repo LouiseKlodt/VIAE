@@ -3,5 +3,9 @@ Open source extended version of [VIA](http://www.robots.ox.ac.uk/~vgg/software/v
 - more options, such as saving progress of work
 - standardised and extended export format choices: COCO or pascal VOC
 - image masks
-- moderised javascript 
-- a new UI
+- moderised javascript (optional)
+- a new UI (optional)
+
+## Running the application
+
+`bash % python3 viae`
