@@ -43,13 +43,18 @@
     If you do not wish to share this data, you can safely remove the
     javascript code below.
     -->
+
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='hbc-via-style.css') }}">
+    
     <script type="text/javascript" src='{{ url_for('static', filename='via-google-analytics.js')}}'></script>
 
     <!-- Predefined label / class definitions for annotation panel dropdown -->
     <script type="text/javascript" src='{{ url_for('static', filename='attributes.js')}}'></script>
 
-    <!-- CSS style definition -->
-    <link type="text/css" rel="stylesheet" href="via-style.css">
+    <!-- CSS style definition 
+    <link type="text/css" rel="stylesheet" href="hbc-via-style.css">
+    -->
 
   </head>
 

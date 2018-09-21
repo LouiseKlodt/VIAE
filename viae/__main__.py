@@ -2,7 +2,7 @@ from flask import Flask
 from flask import render_template, make_response, jsonify, request, json
 from flask_cors import CORS, cross_origin
 from io import BytesIO
-from lib_cerebro_py.aws.aws_s3_object import AwsS3Object
+#from lib_cerebro_py.aws.aws_s3_object import AwsS3Object
 from urllib.parse import urlparse
 
 import boto3
@@ -39,7 +39,7 @@ def stylesheet():
 def index():
     return make_response(render_template('hbc-via-demo.html'))
 
-
+'''
 # get all data from S3 in_progress / post new images to S3 in_progress
 @app.route('/images/in_progress', methods=['GET', 'POST'])
 def images_in_progress():
@@ -160,6 +160,7 @@ def delete_data(image_id):
     progress_coco_s3.delete()
     return jsonify({'image_url': img_url, 'coco': coco_fname}) # 204 OK ?
 
+'''
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

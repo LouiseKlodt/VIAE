@@ -1,4 +1,4 @@
-from lib_cerebro_py.aws.aws_s3_object import AwsS3Object
+#from lib_cerebro_py.aws.aws_s3_object import AwsS3Object
 import re 
 
 
