@@ -37,7 +37,7 @@ def stylesheet():
 
 @app.route('/')
 def index():
-    return make_response(render_template('hbc-via-demo.html'))
+    return make_response(render_template('viae.html'))
 
 '''
 # get all data from S3 in_progress / post new images to S3 in_progress
