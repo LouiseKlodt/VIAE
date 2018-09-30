@@ -39,7 +39,7 @@ def stylesheet():
 def index():
     return make_response(render_template('viae.html'))
 
-'''
+
 # get all data from S3 in_progress / post new images to S3 in_progress
 @app.route('/images/in_progress', methods=['GET', 'POST'])
 def images_in_progress():
