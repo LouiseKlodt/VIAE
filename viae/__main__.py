@@ -58,9 +58,6 @@ def images_in_progress():
                     ctx = None
                 with contextlib.closing(urllib.request.urlopen(url, context=ctx)) as f:
                     f_bytes = f.read()
-                #filename, headers = urllib.request.urlretrieve(url, context=ctx)
-                #with open(filename, 'rb') as f:
-                    #f_bytes = f.read()
                 img_id = aws.inc_img_id()
                 file_stem = const.remove_prefix(url)
                 fname = f'{img_id}-{file_stem}'

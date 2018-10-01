@@ -2,29 +2,33 @@
 import re 
 
 
-# S3 constants
-s3_stem = 'https://s3.amazonaws.com/'
-s3_bucket = 'bauta'
+# S3 bucket and folders
+S3_STEM = 'https://s3.amazonaws.com/'
+S3_BUCKET = 'viae_image_annotator' # replace with your bucket name
+#KEY = 'my_image_in_s3.jpg' # replace with your object key
 
-s3_in_progress = f'{s3_stem}{s3_bucket}/image-annotations/in-progress/'
-s3_progress_images = f'{s3_in_progress}images/'
-s3_progress_coco = f'{s3_in_progress}coco/'
+# this is where in progess labeling data are stored
+S3_IN_PROGRESS = f'{S3_STEM}{S3_BUCKET}/in_progress_data/'
+S3_IN_PROGRESS_IMAGES = f'{S3_IN_PROGRESS}images/'
+S3_IN_PROGRESS_COCO = f'{S3_IN_PROGRESS}coco/'
 
-s3_validate = f'{s3_stem}{s3_bucket}/image-annotations/validate-data/'
-s3_validate_images = f'{s3_validate}images/'
-s3_validate_coco = f'{s3_validate}coco/'
+# this is where completed labeling data are stored
+S3_VALIDATED = f'{S3_STEM}{S3_BUCKET}/validated_data/'
+S3_VALIDATED_IMAGES = f'{S3_VALIDATED}images/'
+S3_VALIDATED_COCO = f'{S3_VALIDATED}coco/'
 
-s3_train = f'{s3_stem}{s3_bucket}/image-annotations/train-data/'
+'''
+s3_train = f'{S3_STEM}{S3_BUCKET}/image-annotations/train-data/'
 s3_train_images = f'{s3_train}images/'
 s3_train_coco = f'{s3_train}coco/'
 
-s3_test = f'{s3_stem}{s3_bucket}/image-annotations/test-data/'
+s3_test = f'{S3_STEM}{S3_BUCKET}/image-annotations/test-data/'
 s3_test_images = f'{s3_train}images/'
 s3_test_coco = f'{s3_train}coco/'
-
+'''
 
 # store temp files
-tmp = 'via-app/tmp-files/'
+tmp = 'viae/tmp_files/'
 
 
 # regex
