@@ -10,6 +10,7 @@ import constants.constants as const
 import contextlib
 import helpers.aws as aws
 import helpers.coco as coco
+import helpers.regex as regex
 import os
 import re
 import requests
@@ -58,17 +59,22 @@ def images_in_progress():
                     ctx = None
                 with contextlib.closing(urllib.request.urlopen(url, context=ctx)) as f:
                     f_bytes = f.read()
-                img_id = aws.inc_img_id()
-                file_stem = const.remove_prefix(url)
+                img_id = aws.inc_image_id()
+                print("image id is: " + img_id)
+                file_stem = regex.remove_prefix(url)
                 fname = f'{img_id}-{file_stem}'
-                img_url = f'{const.s3_progress_images}{fname}'
+                img_url = f'{const.S3_IN_PROGRESS_IMAGES}{fname}'
+                #aws.upload_file_object() etc
                 img_s3 = AwsS3Object(img_url)
                 img_s3.upload_file_object(BytesIO(f_bytes), extra_args={'ACL':'public-read'})
                 urllib.request.urlcleanup()
                 coco_obj = coco.upload_coco_to_s3(img_id, img_url, fname, sys.getsizeof(f_bytes))
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
-            return jsonify(files_with_coco)
+                '''
+            return "ok" #jsonify(files_with_coco)
         else:    
+            return "nok"
+            '''
             files = request.files
             files_with_coco = []
             for i in range(len(files)):
@@ -83,7 +89,9 @@ def images_in_progress():
                 via_obj = coco.coco2via(coco_obj)
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
+            '''
     # GET
+    '''
     coco_s3_uris = AwsS3Object(const.s3_progress_coco).list_objects()
     coco_urls = []
     for coco_uri in coco_s3_uris[1:]:  # NB: first item is bucket folder
@@ -99,8 +107,9 @@ def images_in_progress():
         annot_data = via_dict.get(fname)
         via_annot_data[fname] = annot_data
     return jsonify(via_annot_data)
+    '''
 
-
+'''
 @app.route('/images/in_progress/<image_id>', methods=['PUT', 'POST'])
 def submit_data(image_id):
     if request.method == 'PUT': # save partial labeling data to s3 in_progress 
