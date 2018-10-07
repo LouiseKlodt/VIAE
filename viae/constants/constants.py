@@ -13,7 +13,7 @@ VALIDATED_IMAGES = f'{VALIDATED}images/'
 VALIDATED_COCO = f'{VALIDATED}coco/'
 
 # store temp files
-tmp = 'viae/tmp_files/'
+tmp = 'viae/tmp/'
 
 
 

@@ -9,8 +9,7 @@ import boto3
 import constants.constants as c
 import constants.regex as regex
 import contextlib
-import coco.via2coco as via2coco
-import coco.coco2via as coco2via
+import coco.coco as coco 
 import os
 import re
 import requests
@@ -22,8 +21,6 @@ import urllib
 
 
 app = Flask(__name__)
-#CORS(app, resources=r'/images/*')
-
 
 @app.route("/internal/health_check")
 def health_check():
@@ -51,7 +48,6 @@ def images_in_progress():
             files_with_coco = []
             for u in url_list:
                 url = urllib.parse.unquote(u)
-                print(url)
                 if url.startswith('https'):
                     ctx = ssl.create_default_context()
                 else:
@@ -62,11 +58,11 @@ def images_in_progress():
                 file_stem = regex.remove_prefix(url)
                 fname = f'{img_id}-{file_stem}'
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
-                s3.upload_fileobj(BytesIO(f_bytes), c.BUCKET, fname)
+                s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
                 urllib.request.urlcleanup()
-                #coco_obj = coco.upload_coco_to_s3(img_id, img_url, fname, sys.getsizeof(f_bytes))
-                #files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
-            return "ok" #jsonify(files_with_coco)
+                coco_obj = s3.upload_coco(img_id, img_url, fname, sys.getsizeof(f_bytes))
+                files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
+            return jsonify(files_with_coco)
         else:    
             return "nok"
             '''
