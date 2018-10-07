@@ -2,24 +2,23 @@ from flask import Flask
 from flask import render_template, make_response, jsonify, request, json
 from flask_cors import CORS, cross_origin
 from io import BytesIO
-#from lib_cerebro_py.aws.aws_s3_object import AwsS3Object
 from urllib.parse import urlparse
 
+import aws.s3client as s3
 import boto3
-import constants.constants as const
+import constants.constants as c
+import constants.regex as regex
 import contextlib
-import helpers.aws as aws
-import helpers.coco as coco
-import helpers.regex as regex
+import coco.via2coco as via2coco
+import coco.coco2via as coco2via
 import os
 import re
 import requests
 import sys
-import urllib
 import ssl
-
 import shutil
 import tempfile
+import urllib
 
 
 app = Flask(__name__)
@@ -59,18 +58,14 @@ def images_in_progress():
                     ctx = None
                 with contextlib.closing(urllib.request.urlopen(url, context=ctx)) as f:
                     f_bytes = f.read()
-                img_id = aws.inc_image_id()
-                print("image id is: " + img_id)
+                img_id = s3.inc_image_id()
                 file_stem = regex.remove_prefix(url)
                 fname = f'{img_id}-{file_stem}'
-                img_url = f'{const.S3_IN_PROGRESS_IMAGES}{fname}'
-                #aws.upload_file_object() etc
-                img_s3 = AwsS3Object(img_url)
-                img_s3.upload_file_object(BytesIO(f_bytes), extra_args={'ACL':'public-read'})
+                img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
+                s3.upload_fileobj(BytesIO(f_bytes), c.BUCKET, fname)
                 urllib.request.urlcleanup()
-                coco_obj = coco.upload_coco_to_s3(img_id, img_url, fname, sys.getsizeof(f_bytes))
-                files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
-                '''
+                #coco_obj = coco.upload_coco_to_s3(img_id, img_url, fname, sys.getsizeof(f_bytes))
+                #files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return "ok" #jsonify(files_with_coco)
         else:    
             return "nok"
