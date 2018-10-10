@@ -138,7 +138,7 @@ def coco2via(coco_obj):
             'annotation_id': None
         }
         shape_attr = {
-            'name': 'polygon', # TODO check how to revert shape info
+            'name': 'polygon',
             'all_points_x': [],
             'all_points_y': []
         }

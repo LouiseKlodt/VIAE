@@ -1,11 +1,14 @@
 from flask import json
+from urllib.parse import urlparse
+
 import boto3
 import coco.coco as coco
 import constants.constants as c
+import constants.regex as regex
 import datetime as dt 
 import os
 import re
-import constants.regex as regex
+import urllib
 
 s3 = boto3.resource('s3')
 
@@ -44,6 +47,17 @@ def upload_coco(img_id, img_url, fname, file_size):
     #coco_s3.upload_file(f'{constants.tmp}{coco_fname}', extra_args={'ACL':'public-read'})
     os.remove(f'{c.tmp}{coco_fname}')
     return coco_obj
+
+
+def list_urls(bucket, prefix):
+    metadata = s3client.list_objects(Bucket = bucket, Marker = prefix, Prefix = prefix)
+    contents = metadata['Contents']
+    urls = []
+    for i in contents:
+        url = i['Key']
+        parsed_url = urllib.parse.quote(url)
+        urls.append(f'{c.S3_STEM}{bucket}/{parsed_url}')
+    return urls
 
 
 def move_to_validate_data(typ, filename):

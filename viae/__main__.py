@@ -37,7 +37,6 @@ def index():
     return make_response(render_template('viae.html'))
 
 
-# get all data from S3 in_progress / post new images to S3 in_progress
 @app.route('/images/in_progress', methods=['GET', 'POST'])
 def images_in_progress():
     if request.method == 'POST':
@@ -63,31 +62,21 @@ def images_in_progress():
                 coco_obj = s3.upload_coco(img_id, img_url, fname, sys.getsizeof(f_bytes))
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
-        else:    
-            return "nok"
-            '''
+        else:   
             files = request.files
             files_with_coco = []
             for i in range(len(files)):
                 f = files[f'file_{i}']
                 f_bytes = f.read()
-                img_id = aws.inc_img_id()
+                img_id = s3.inc_image_id()
                 fname = f'{img_id}-{f.filename}'
-                img_url = f'{const.s3_progress_images}{fname}'
-                img_s3 = AwsS3Object(img_url)
-                img_s3.upload_file_object(BytesIO(f_bytes), extra_args={'ACL':'public-read'})
-                coco_obj = coco.upload_coco_to_s3(img_id, img_url, fname, sys.getsizeof(f_bytes))
-                via_obj = coco.coco2via(coco_obj)
+                img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
+                s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
+                coco_obj = s3.upload_coco(img_id, img_url, fname, sys.getsizeof(f_bytes))
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
-            '''
     # GET
-    '''
-    coco_s3_uris = AwsS3Object(const.s3_progress_coco).list_objects()
-    coco_urls = []
-    for coco_uri in coco_s3_uris[1:]:  # NB: first item is bucket folder
-        coco_urls.append(f'{const.s3_stem}{coco_uri.uri[5:]}')
-        
+    coco_urls = s3.list_urls(c.BUCKET, c.PROGRESS_COCO)
     via_annot_data = {}
     for url in coco_urls:
         with contextlib.closing(urllib.request.urlopen(url)) as coco_file:
@@ -98,7 +87,6 @@ def images_in_progress():
         annot_data = via_dict.get(fname)
         via_annot_data[fname] = annot_data
     return jsonify(via_annot_data)
-    '''
 
 '''
 @app.route('/images/in_progress/<image_id>', methods=['PUT', 'POST'])
