@@ -50,13 +50,14 @@ def upload_coco(img_id, img_url, fname, file_size):
 
 
 def list_urls(bucket, prefix):
-    metadata = s3client.list_objects(Bucket = bucket, Marker = prefix, Prefix = prefix)
-    contents = metadata['Contents']
+    data = s3client.list_objects(Bucket = bucket, Marker = prefix, Prefix = prefix)
     urls = []
-    for i in contents:
-        url = i['Key']
-        parsed_url = urllib.parse.quote(url)
-        urls.append(f'{c.S3_STEM}{bucket}/{parsed_url}')
+    if 'Contents' in data: 
+        contents = data['Contents']
+        for i in contents:
+            url = i['Key']
+            parsed_url = urllib.parse.quote(url)
+            urls.append(f'{c.S3_STEM}{bucket}/{parsed_url}')
     return urls
 
 
