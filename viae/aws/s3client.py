@@ -88,9 +88,8 @@ def list_urls(bucket, prefix):
             urls.append(f'{c.S3_STEM}{bucket}/{parsed_url}')
     return urls
 
-
+'''
 def move_to_validate_data(typ, filename):
-    #s3 = boto3.resource('s3')
     
     copy_source = {
         'Bucket': f'{c.BUCKET}',
@@ -108,25 +107,30 @@ def move_to_validate_data(typ, filename):
         Bucket=f'{c.BUCKET}',
         Key=f'in_progress_data/{typ}/{filename}'
     )
-
 '''
+
+
 def move_to_destination(typ, filename, destination):
-    #s3 = boto3.resource('s3')
     
     copy_source = {
-        'Bucket': f'{const.BUCKET}',
+        'Bucket': f'{c.BUCKET}',
         'Key': f'in_progress_data/{typ}/{filename}'
     }
 
     s3.meta.client.copy_object(
             ACL='public-read',
-            Bucket=f'{const.BUCKET}',
+            Bucket=f'{c.BUCKET}',
             CopySource=copy_source,
-            Key=f'image-annotations/{destination}/{typ}/{filename}'
+            Key=f'{destination}/{typ}/{filename}'
     )
 
     s3.meta.client.delete_object(
-        Bucket=f'{const.BUCKET}',
-        Key=f'image-annotations/in-progress/{typ}/{filename}'
+        Bucket=f'{c.BUCKET}',
+        Key=f'in_progress_data/{typ}/{filename}'
     )
-    '''
+    
+def delete_file(typ, fname):
+    s3client.delete_object(
+        Bucket= c.BUCKET, 
+        Key=f'in_progress_data/{typ}/{fname}'
+    )
