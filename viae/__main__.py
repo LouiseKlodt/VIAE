@@ -56,10 +56,14 @@ def images_in_progress():
                 img_id = s3.inc_image_id()
                 file_stem = regex.remove_prefix(url)
                 fname = f'{img_id}-{file_stem}'
-                img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
+                coco_fname = regex.to_json(fname)
+
                 s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
                 urllib.request.urlcleanup()
-                coco_obj = s3.upload_coco(img_id, img_url, fname, sys.getsizeof(f_bytes))
+
+                img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
+                s3.upload_coco(fname, sys.getsizeof(f_bytes))
+                coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, sys.getsizeof(f_bytes))
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
         else:   
@@ -70,9 +74,11 @@ def images_in_progress():
                 f_bytes = f.read()
                 img_id = s3.inc_image_id()
                 fname = f'{img_id}-{f.filename}'
+                coco_fname = regex.to_json(fname)
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
                 s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
-                coco_obj = s3.upload_coco(img_id, img_url, fname, sys.getsizeof(f_bytes))
+                s3.upload_coco(fname, sys.getsizeof(f_bytes))
+                coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, file_size)
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
     # GET
@@ -89,17 +95,24 @@ def images_in_progress():
     return jsonify(via_annot_data)
 
 '''
+  File "/Users/louise/dev/viae/viae/__main__.py", line 106, in submit_data
+    coco_obj = coco.via_to_coco(via_label_data, coco_fname)
+  File "/Users/louise/dev/viae/viae/coco/coco.py", line 58, in via_to_coco
+    coco = s3client.download_file(f'in_progress_data/coco/{coco_url}', f'viae/tmp/{coco_url}')
+  File "/Users/louise/dev/viae/viae/aws/s3client.py", line 51, in download_file
+    s3.meta.client.download_file(c.BUCKET, path, dest)
+'''
+
 @app.route('/images/in_progress/<image_id>', methods=['PUT', 'POST'])
 def submit_data(image_id):
-    if request.method == 'PUT': # save partial labeling data to s3 in_progress 
+    # save partial labeling data to s3 in_progress 
+    if request.method == 'PUT': 
         via_label_data = json.loads(request.data)
         img_url = via_label_data['filename']
-        fname = const.remove_prefix(img_url)
-        coco_fname = const.to_json(fname)
+        fname = regex.remove_prefix(img_url)
+        coco_fname = regex.to_json(fname)
         coco_obj = coco.via_to_coco(via_label_data, coco_fname)
-        coco_s3 = AwsS3Object(f'{const.s3_progress_coco}{coco_fname}')
-        coco_s3.upload_file(f'{const.tmp}{coco_fname}', extra_args={'ACL':'public-read'})
-        os.remove(f'{const.tmp}{coco_fname}')
+        s3.upload_file(f'{c.tmp}{coco_fname}', f'in_progress_data/coco/{coco_fname}')
 
         via_annot_data = {}
         via_dict = coco.coco2via(coco_obj)
@@ -145,7 +158,6 @@ def delete_data(image_id):
     progress_coco_s3.delete()
     return jsonify({'image_url': img_url, 'coco': coco_fname}) # 204 OK ?
 
-'''
 
 if __name__ == "__main__":
     app.run(host='0.0.0.0', debug=True)

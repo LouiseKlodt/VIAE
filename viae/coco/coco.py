@@ -3,7 +3,7 @@ import datetime as dt
 import re
 import constants.constants as constants
 import os
-import aws as aws
+from aws import s3client
 
 
 def setup_coco(image_id, image_url, file_name, fname_json, file_size):
@@ -52,19 +52,12 @@ def setup_coco(image_id, image_url, file_name, fname_json, file_size):
 
     return coco
 
+#f = s3client.download_file(bucket_name, 'in_progress_data/coco/00197-couscous-veggie.json', './tmp/new.json')
 
 def via_to_coco(via_label_data, coco_fname):
-    coco_url = f'{constants.s3_progress_coco}{coco_fname}'
-    coco_s3 = AwsS3Object(coco_url)
-    coco_s3.download_file(f'{constants.tmp}{coco_fname}')
-    coco_file = open(f'{constants.tmp}{coco_fname}').read()
-    coco = json.loads(coco_file)
-
-    categories_s3 = AwsS3Object(f'{constants.s3_in_progress}categories.json')
-    categories_s3.download_file(f'{constants.tmp}categories.json')
-    cat_file = open(f'{constants.tmp}categories.json').read()
-    categories_s3 = json.loads(cat_file)
-    os.remove(f'{constants.tmp}categories.json')
+    coco_url = f'{constants.IN_PROGRESS_COCO}{coco_fname}'
+    coco = s3client.download_file(constants.BUCKET, f'in_progress_data/coco/{coco_fname}', f'viae/tmp/{coco_fname}')
+    categories_s3 = s3client.download_file(constants.BUCKET, f'in_progress_data/categories.json', f'viae/tmp/cats.json')
 
     annotations = []
     for region in via_label_data['regions']:
@@ -93,7 +86,7 @@ def via_to_coco(via_label_data, coco_fname):
         if 'annotation_id' in region:
             annot_id = region['annotation_id']
         else:
-            annot_id = aws.inc_annot_id()
+            annot_id = s3client.inc_annot_id()
         
         annotation = {
             'id': annot_id,
