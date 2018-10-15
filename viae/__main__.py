@@ -62,8 +62,9 @@ def images_in_progress():
                 urllib.request.urlcleanup()
 
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
-                s3.upload_coco(fname, sys.getsizeof(f_bytes))
+                
                 coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, sys.getsizeof(f_bytes))
+                s3.upload_coco(coco_fname)
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
         else:   
@@ -77,8 +78,8 @@ def images_in_progress():
                 coco_fname = regex.to_json(fname)
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
                 s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
-                s3.upload_coco(fname, sys.getsizeof(f_bytes))
-                coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, file_size)
+                coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, sys.getsizeof(f_bytes))
+                s3.upload_coco(coco_fname)
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
     # GET

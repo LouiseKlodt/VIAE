@@ -65,6 +65,7 @@ def upload_coco(coco_fname):
     s3.meta.client.upload_file(f'{c.tmp}{coco_fname}', c.BUCKET, f'in_progress_data/coco/{coco_fname}', ExtraArgs={'ACL':'public-read'})
     os.remove(f'{c.tmp}{coco_fname}')
 
+
 def upload_file(source, dest):
      s3.meta.client.upload_file(source, c.BUCKET, dest, ExtraArgs={'ACL':'public-read'})
 
