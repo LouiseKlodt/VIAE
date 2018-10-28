@@ -2,7 +2,7 @@
 // Initialization routine
 //
 
-function _hbc_via_init() {
+function _viae_init() {
     console.log(VIA_NAME);
     show_message(`${VIA_NAME}(${VIA_SHORT_NAME}) version ${VIA_VERSION}. Ready !`, 2*VIA_THEME_MESSAGE_TIMEOUT_MS);
     document.getElementById('img_fn_list').style.display = 'block';
@@ -16,7 +16,7 @@ function _hbc_via_init() {
 
     show_single_image_view();
     init_leftsidebar_accordion();
-    hbc_hide_attributes_editor();
+    viae_hide_attributes_editor();
     attribute_update_panel_set_active_button();
     annotation_editor_set_active_button();
     init_message_panel();
@@ -29,7 +29,7 @@ function _hbc_via_init() {
 }
 
 
-function hbc_hide_attributes_editor() {
+function viae_hide_attributes_editor() {
   leftsidebar_show();
   document.getElementById('attributes_editor_panel').classList.toggle('hide');
   document.getElementById('attributes_editor_panel_title').classList.toggle('hide');
