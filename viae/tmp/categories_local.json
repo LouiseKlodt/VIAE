@@ -1,0 +1,47 @@
+[
+    {
+        "supercategory": null,
+        "id": "001",
+        "name": "bag"
+    },
+    {
+        "supercategory": null,
+        "id": "002",
+        "name": "dress"
+    },
+    {
+        "supercategory": null,
+        "id": "003",
+        "name": "hat"
+    },
+    {
+        "supercategory": null,
+        "id": "004",
+        "name": "jacket"
+    },
+    {
+        "supercategory": null,
+        "id": "005",
+        "name": "shoe"
+    },
+    {
+        "supercategory": null,
+        "id": "006",
+        "name": "skirt"
+    },
+    {
+        "supercategory": null,
+        "id": "007",
+        "name": "top"
+    },
+    {
+        "supercategory": null,
+        "id": "008",
+        "name": "trousers"
+    },
+    {
+        "supercategory": null,
+        "id": "009",
+        "name": "unknown"
+    }
+]
