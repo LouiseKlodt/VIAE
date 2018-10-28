@@ -29,7 +29,7 @@ def health_check():
 
 @app.route("/via-style.css")
 def stylesheet():
-   return app.send_static_file('hbc-via-style.css')
+   return app.send_static_file('viae-style.css')
 
 
 @app.route('/')
