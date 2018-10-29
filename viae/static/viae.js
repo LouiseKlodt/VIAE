@@ -22,9 +22,9 @@ function _viae_init() {
     init_message_panel();
 
     // submodules: fetch images from in_progress S3 bucket, preload label dropdown, render annotations
-    if (typeof _hbc_via_load_submodules === 'function') {
+    if (typeof _viae_load_submodules === 'function') {
       console.log('Loading VIA submodule');
-      _hbc_via_load_submodules();
+      _viae_load_submodules();
     }
 }
 
@@ -36,10 +36,10 @@ function viae_hide_attributes_editor() {
 }
 
 
-function _hbc_via_load_submodules() {
+function _viae_load_submodules() {
      _via_current_shape = VIA_REGION_SHAPE.POLYGON;  // preload polygon shape as default
-    _hbc_via_basic_demo_load_img();
-    _hbc_via_basic_demo_define_attributes();
+    _viae_basic_demo_load_img();
+    _viae_basic_demo_define_attributes();
     //_via_basic_demo_define_annotations();
     //toggle_attributes_editor();
     //update_attributes_update_panel();
@@ -48,7 +48,7 @@ function _hbc_via_load_submodules() {
 
 
 // GET in_progress data
-function _hbc_via_basic_demo_load_img() {
+function _viae_basic_demo_load_img() {
     const url = `/images/in_progress`;
     fetch(url)
     .then((resp) => resp.json())
@@ -64,23 +64,21 @@ function _hbc_via_basic_demo_load_img() {
           project_file_add_base64(filename, filename);
         });
         _via_show_img(0);
-        hbc_update_img_fn_list(filenames);
-        hbc_import_annotations_from_json(image_data);
+        viae_update_img_fn_list(filenames);
+        viae_import_annotations_from_json(image_data);
         })
 }
 
 
 // Load predefined label classes from static/attributes.js for poulating dropdown
-function _hbc_via_basic_demo_define_attributes() {
+function _viae_basic_demo_define_attributes() {
   var attributes_json = JSON.stringify(label_attributes);
   project_import_attributes_from_json(attributes_json);
 }
 
 
 // load in_progress annotation data and render to user
-function hbc_import_annotations_from_json(data) {
-  console.log('importing annotations:')
-  console.log(data);
+function viae_import_annotations_from_json(data) {
   return new Promise( function(ok_callback, err_callback) {
     if (data === '' || typeof(data) === 'undefined') {
       return;
@@ -177,7 +175,7 @@ function hbc_import_annotations_from_json(data) {
 }
 
 
-function hbc_update_img_fn_list(filenames) {
+function viae_update_img_fn_list(filenames) {
     const regex = document.getElementById('img_fn_list_regex').value;
     const p = document.getElementById('filelist_preset_filters_list');
     if ( regex === '' || regex === null ) {
@@ -187,7 +185,7 @@ function hbc_update_img_fn_list(filenames) {
         _via_img_fn_list_img_index_list = [];
         _via_img_fn_list_html.push('<ul>');
         for ( var i=0; i < filenames.length; ++i ) {
-          _via_img_fn_list_html.push( hbc_img_fn_list_ith_entry_html(i, filenames) );
+          _via_img_fn_list_html.push( viae_img_fn_list_ith_entry_html(i, filenames) );
           _via_img_fn_list_img_index_list.push(i);
         }
         _via_img_fn_list_html.push('</ul>');
@@ -204,7 +202,7 @@ function hbc_update_img_fn_list(filenames) {
     }
   }
 
-function hbc_img_fn_list_ith_entry_html(i, filenames) {
+function viae_img_fn_list_ith_entry_html(i, filenames) {
   let htmli = '';
   let filename = filenames[i];
   if ( is_url(filename) ) {
@@ -235,7 +233,7 @@ function hbc_img_fn_list_ith_entry_html(i, filenames) {
 //
 
 
-function hbc_project_file_add_url_with_input() {
+function viae_project_file_add_url_with_input() {
   const config = {
     'title':'Add File using URL'
   };
@@ -257,17 +255,17 @@ function hbc_project_file_add_url_with_input() {
     }        
   };
 
-  invoke_with_user_inputs(hbc_project_file_add_url_input_done, input, config);
+  invoke_with_user_inputs(viae_project_file_add_url_input_done, input, config);
 }
 
-function hbc_project_file_add_url_input_done(input) {
+function viae_project_file_add_url_input_done(input) {
   if ( input.url.value !== '' ) {
     var url = input.url.value.trim();
-    hbc_post_url_to_server(url);
+    viae_post_url_to_server(url);
   } else {
     if ( input.url_list.value !== '' ) {
       var url_list_str = input.url_list.value;
-      hbc_post_url_to_server(url_list_str);
+      viae_post_url_to_server(url_list_str);
     }
   }
 }
@@ -276,7 +274,7 @@ function hbc_project_file_add_url_input_done(input) {
 // post url to server (user adds new file via url path)
 //
 
-function hbc_post_url_to_server(url_str) { // NB: url_str is either 'url1' or 'url1\nurl2\nurl3\n...'
+function viae_post_url_to_server(url_str) { // NB: url_str is either 'url1' or 'url1\nurl2\nurl3\n...'
   const url = new URL(`${window.location}images/in_progress`);
   params = {url: true};
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]));
@@ -301,24 +299,24 @@ function hbc_post_url_to_server(url_str) { // NB: url_str is either 'url1' or 'u
 
 
 // Submit new image files to server (when user clicks 'add files')
-function hbc_sel_local_images() {
+function viae_sel_local_images() {
   // source: https://developer.mozilla.org/en-US/docs/Using_files_from_web_applications
   if (invisible_file_input) {
     invisible_file_input.setAttribute('multiple', 'multiple')
     invisible_file_input.accept   = '.jpg,.jpeg,.png,.bmp';
-    invisible_file_input.onchange = hbc_project_file_add_local;
+    invisible_file_input.onchange = viae_project_file_add_local;
     invisible_file_input.click();
   }
 }
 
 
-function hbc_project_file_add_local(event) {
+function viae_project_file_add_local(event) {
   var user_selected_images = event.target.files;
-  hbc_post_new_file_to_server(user_selected_images);
+  viae_post_new_file_to_server(user_selected_images);
 }
 
 
-function hbc_post_new_file_to_server(user_selected_images) {
+function viae_post_new_file_to_server(user_selected_images) {
   const url = new URL(`${window.location}images/in_progress`);
   params = {url: false};
   Object.keys(params).forEach(key => url.searchParams.append(key, params[key]))
@@ -333,11 +331,11 @@ function hbc_post_new_file_to_server(user_selected_images) {
   .then(response => response.json())
   .catch(error => console.error('Error:', error))
   .then(function(image_data) {
-    hbc_update_img_name_in_panel(image_data, user_selected_images);
+    viae_update_img_name_in_panel(image_data, user_selected_images);
   })
 }
 
-function hbc_update_img_name_in_panel(image_data_w_coco, user_selected_images) {
+function viae_update_img_name_in_panel(image_data_w_coco, user_selected_images) {
   var original_image_count = _via_img_count;
   var new_img_index_list = [];
   var discarded_file_count = 0;
@@ -396,7 +394,7 @@ function hbc_update_img_name_in_panel(image_data_w_coco, user_selected_images) {
 //
 
 // ref in via.js: download_all_region_data
-function hbc_submit_all_region_data(type) {
+function viae_submit_all_region_data(type) {
   // Javascript strings (DOMString) is automatically converted to utf-8
   // see: https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob
   const all_region_data = pack_via_metadata(type);  // this is [string] of length 1, containing exported labeling data for all images in project panel
@@ -405,11 +403,11 @@ function hbc_submit_all_region_data(type) {
   const img_url1 = curr_img_data.filename;
   const file_name = img_url1.replace(/.*\/([^\/]+)$/,'$1');  // remove prefix 'https://s3.amazonaws.com/cerebro-image-annotations/in-progress/'
   const s3_image_id = file_name.replace(/^([0-9]{5}).*/, '$1');   // remove everything except image id
-  hbc_project_file_submit_with_confirm(s3_image_id, curr_img_data);
+  viae_project_file_submit_with_confirm(s3_image_id, curr_img_data);
 }
 
 
-function hbc_project_file_submit_with_confirm(s3_image_id, curr_img_data) {
+function viae_project_file_submit_with_confirm(s3_image_id, curr_img_data) {
   var img_id = _via_image_id_list[_via_image_index];
   var filename = _via_img_metadata[img_id].filename;
   var region_count = _via_img_metadata[img_id].regions.length;
@@ -424,19 +422,19 @@ function hbc_project_file_submit_with_confirm(s3_image_id, curr_img_data) {
                 'region_count':{ type:'text', name:'Number of regions', disabled:true, value:region_count, size:8}
               };
 
-  hbc_invoke_with_user_inputs(hbc_project_file_submit_confirmed, input, config, s3_image_id, curr_img_data, 'hbc_submit_to_server');
+  viae_invoke_with_user_inputs(viae_project_file_submit_confirmed, input, config, s3_image_id, curr_img_data, 'viae_submit_to_server');
   }
 }
 
 
 // invoke a method after receiving inputs from user
-function hbc_invoke_with_user_inputs(ok_handler, input, config, s3_image_id, payload, fn_call_to_server) {
-  hbc_setup_user_input_panel(ok_handler, input, config, s3_image_id, payload, fn_call_to_server);
+function viae_invoke_with_user_inputs(ok_handler, input, config, s3_image_id, payload, fn_call_to_server) {
+  viae_setup_user_input_panel(ok_handler, input, config, s3_image_id, payload, fn_call_to_server);
   show_user_input_panel();
 }
 
 
-function hbc_setup_user_input_panel(ok_handler, input, config, s3_image_id, payload, fn_call_to_server) {
+function viae_setup_user_input_panel(ok_handler, input, config, s3_image_id, payload, fn_call_to_server) {
   // create html page with OK and CANCEL button
   // when OK is clicked
   //  - setup input with all the user entered values
@@ -456,7 +454,7 @@ function hbc_setup_user_input_panel(ok_handler, input, config, s3_image_id, payl
 
   html.push('<div class="user_inputs">');
 
-  if (fn_call_to_server == 'hbc_submit_to_server') {
+  if (fn_call_to_server == 'viae_submit_to_server') {
       // radio buttons html
     html.push('<div class="row">');
     html.push('<span class="cell">Dataset type</span>');
@@ -543,7 +541,7 @@ function hbc_setup_user_input_panel(ok_handler, input, config, s3_image_id, payl
   html.push('</div>'); // end of user_input div
   html.push('<div class="user_confirm">' +
             '<span class="ok">' +
-            '<button id="user_input_ok_button" onclick="hbc_user_input_parse_and_invoke_handler(\'' + s3_image_id + '\', \'' + payload_str + '\', ' + fn_call_to_server + ')">&nbsp;OK&nbsp;</button></span>' +
+            '<button id="user_input_ok_button" onclick="viae_user_input_parse_and_invoke_handler(\'' + s3_image_id + '\', \'' + payload_str + '\', ' + fn_call_to_server + ')">&nbsp;OK&nbsp;</button></span>' +
             '<span class="cancel">' +
             '<button id="user_input_cancel_button" onclick="user_input_cancel_handler()">CANCEL</button></span></div>');
   c.innerHTML = html.join('');
@@ -553,7 +551,7 @@ function hbc_setup_user_input_panel(ok_handler, input, config, s3_image_id, payl
 }
 
 
-function hbc_user_input_parse_and_invoke_handler(s3_image_id, payload_str, fn_call_to_server) {
+function viae_user_input_parse_and_invoke_handler(s3_image_id, payload_str, fn_call_to_server) {
   var payload = JSON.parse(decodeURIComponent(payload_str));
   var elist = document.getElementsByClassName('_via_user_input_variable');
   var i;
@@ -599,7 +597,7 @@ function hbc_user_input_parse_and_invoke_handler(s3_image_id, payload_str, fn_ca
 }
 
 
-function hbc_project_file_submit_confirmed(input) {
+function viae_project_file_submit_confirmed(input) {
   var img_index = input.img_index.value - 1;
   var s3_img_url = input.filename.value;
   var filename = s3_img_url.replace(/.*\/([^\/]+)$/,'$1');
@@ -630,7 +628,7 @@ function hbc_project_file_submit_confirmed(input) {
 }
 
 
-function hbc_submit_to_server(image_id, data) {
+function viae_submit_to_server(image_id, data) {
   const url = `/images/in_progress/${image_id}`;
   fetch(url, {
     method: 'POST',
@@ -650,7 +648,7 @@ function hbc_submit_to_server(image_id, data) {
 // delete labeling data from s3 in_progress
 //
 
-function hbc_project_file_remove_with_confirm() {
+function viae_project_file_remove_with_confirm() {
   var img_url1 = _via_image_id_list[_via_image_index];
   var img_url_s3 = img_url1.replace(/(.*\.[a-z]+)-?[0-9]+$/, '$1');
   var filename = _via_img_metadata[img_url1].filename;
@@ -665,11 +663,11 @@ function hbc_project_file_remove_with_confirm() {
               'region_count':{ type:'text', name:'Number of regions', disabled:true, value:region_count, size:8}
             };
 
-  hbc_invoke_with_user_inputs(hbc_project_file_remove_confirmed, input, config, s3_image_id, img_url_s3, 'hbc_delete_labeling_data_from_s3');
+  viae_invoke_with_user_inputs(viae_project_file_remove_confirmed, input, config, s3_image_id, img_url_s3, 'viae_delete_labeling_data_from_s3');
 }
 
 
-function hbc_project_file_remove_confirmed(input) {
+function viae_project_file_remove_confirmed(input) {
   var img_index = input.img_index.value - 1;
   var fname = input.filename.value;
   project_remove_file(img_index);
@@ -691,7 +689,7 @@ function hbc_project_file_remove_confirmed(input) {
 }
 
 
-function hbc_delete_labeling_data_from_s3(s3_image_id, img_url_s3) {
+function viae_delete_labeling_data_from_s3(s3_image_id, img_url_s3) {
   const url = `images/in_progress/${s3_image_id}`;
   fetch(url, {
     method: 'DELETE',
@@ -712,7 +710,7 @@ function hbc_delete_labeling_data_from_s3(s3_image_id, img_url_s3) {
 //
 
 // ref: download_all_region_data
-function hbc_save_all_region_data(type) {
+function viae_save_all_region_data(type) {
   // Javascript strings (DOMString) is automatically converted to utf-8
   // see: https://developer.mozilla.org/en-US/docs/Web/API/Blob/Blob
   var all_region_data = pack_via_metadata(type);  // this is [string] of length 1, containing exported labeling data for all images in project panel
@@ -721,12 +719,12 @@ function hbc_save_all_region_data(type) {
   const img_url1 = curr_img_data.filename;
   const file_name = img_url1.replace(/.*\/([^\/]+)$/,'$1');  // remove prefix 'https://s3.amazonaws.com/cerebro-image-annotations/in-progress/'
   const image_id = file_name.replace(/^([0-9]{5}).*/, '$1');   // remove everything except image id
-  hbc_put_labeling_data_to_s3(curr_img_data, image_id);
+  viae_put_labeling_data_to_s3(curr_img_data, image_id);
   show_message('Saved progress of file [' + img_url1 + '] to S3.');;
 }
 
 
-function hbc_put_labeling_data_to_s3(data, image_id) {
+function viae_put_labeling_data_to_s3(data, image_id) {
   const url = `/images/in_progress/${image_id}`;
   fetch(url, {
     method: 'PUT',
