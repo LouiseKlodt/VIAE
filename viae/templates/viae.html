@@ -44,7 +44,6 @@
     javascript code below.
     -->
 
-
     <link rel="stylesheet" href="{{ url_for('static', filename='viae-style.css') }}">
     
     <script type="text/javascript" src='{{ url_for('static', filename='via-google-analytics.js')}}'></script>
@@ -52,13 +51,9 @@
     <!-- Predefined label / class definitions for annotation panel dropdown -->
     <script type="text/javascript" src='{{ url_for('static', filename='attributes.js')}}'></script>
 
-    <!-- CSS style definition 
-    <link type="text/css" rel="stylesheet" href="hbc-via-style.css">
-    -->
-
   </head>
 
-  <body onload="_hbc_via_init()" onresize="_via_update_ui_components()">
+  <body onload="_viae_init()" onresize="_via_update_ui_components()">
     <!--
         SVG icon set definitions
         Material icons downloaded from https://material.io/icons
@@ -213,13 +208,13 @@
               <li onclick="project_save_with_confirm()" title="Save this VIA project (as a JSON file)">Save</li>
               <li onclick="settings_panel_toggle()" title="Show/edit project settings">Settings</li>
               <li class="submenu_divider"></li>
-              <li onclick="hbc_sel_local_images()" title="Add images locally stored in this computer">Add local files</li>
-              <li onclick="hbc_project_file_add_url_with_input()" title="Add images from a web URL (e.g. http://www.robots.ox.ac.uk/~vgg/software/via/images/swan.jpg)">Add files from URL</li>
+              <li onclick="viae_sel_local_images()" title="Add images locally stored in this computer">Add local files</li>
+              <li onclick="viae_project_file_add_url_with_input()" title="Add images from a web URL (e.g. http://www.robots.ox.ac.uk/~vgg/software/via/images/swan.jpg)">Add files from URL</li>
               <!-- <li onclick="project_file_add_abs_path_with_input()" title="Add images using absolute path of file (e.g. /home/abhishek/image1.jpg)">Add file using absolute path</li> 
               <li onclick="sel_local_data_file('files_url')" title="Add images from a list of web url or absolute path stored in a text file (one url or path per line)">Add url or path from text file</li> -->
-              <li onclick="hbc_project_file_remove_with_confirm()" title="Remove selected file (i.e. file currently being shown)">Remove file</li>
-              <li onclick="hbc_save_all_region_data('json')" title="Save progress of selected file (i.e. file currently being shown)">Save progress</li>
-              <li onclick="hbc_submit_all_region_data('json')" title="Submit selected file (i.e. file currently being shown)">Submit</li>
+              <li onclick="viae_project_file_remove_with_confirm()" title="Remove selected file (i.e. file currently being shown)">Remove file</li>
+              <li onclick="viae_save_all_region_data('json')" title="Save progress of selected file (i.e. file currently being shown)">Save progress</li>
+              <li onclick="viae_submit_all_region_data('json')" title="Submit selected file (i.e. file currently being shown)">Submit</li>
               <li class="submenu_divider"></li>
               <li onclick="sel_local_data_file('attributes')" title="Import region and file attributes from a JSON file">Import region/file attributes</li>
               <li onclick="project_save_attributes()" title="Export region and file attributes to a JSON file">Export region/file attributes</li>
@@ -351,13 +346,13 @@
           <div id="img_fn_list"></div>
           <p>
             <div class="button_panel">
-              <span class="button" onclick="hbc_sel_local_images()" title="Add new file from local disk">Add Files</span>
-              <span class="button" onclick="hbc_project_file_add_url_with_input()" title="Add new file using URL">Add URL</span>
-              <span class="button" onclick="hbc_project_file_remove_with_confirm()" title="Remove selected file (i.e. file currently being shown) from project">Remove</span>
+              <span class="button" onclick="viae_sel_local_images()" title="Add new file from local disk">Add Files</span>
+              <span class="button" onclick="viae_project_file_add_url_with_input()" title="Add new file using URL">Add URL</span>
+              <span class="button" onclick="viae_project_file_remove_with_confirm()" title="Remove selected file (i.e. file currently being shown) from project">Remove</span>
             </div>
             <div class="button_panel">
-              <span class="button" onclick="hbc_save_all_region_data('json')" title="Save in progress labeling data">Save Progress</span>
-              <span class="button" onclick="hbc_submit_all_region_data('json')" title="Submit finished labeling data">Submit</span>
+              <span class="button" onclick="viae_save_all_region_data('json')" title="Save in progress labeling data">Save Progress</span>
+              <span class="button" onclick="viae_submit_all_region_data('json')" title="Submit finished labeling data">Submit</span>
             </div>
           </p>
         </div>
