@@ -7,6 +7,7 @@ from urllib.parse import urlparse
 import aws.s3client as s3
 import boto3
 import util.constants as c
+import util.aws_config as conf
 import util.regex as regex
 import contextlib
 import coco.coco as coco 
