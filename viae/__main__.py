@@ -6,8 +6,8 @@ from urllib.parse import urlparse
 
 import aws.s3client as s3
 import boto3
-import constants.constants as c
-import constants.regex as regex
+import util.constants as c
+import util.regex as regex
 import contextlib
 import coco.coco as coco 
 import os
@@ -58,7 +58,7 @@ def images_in_progress():
                 fname = f'{img_id}-{file_stem}'
                 coco_fname = regex.to_json(fname)
 
-                s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
+                s3.upload_image(BytesIO(f_bytes), conf.BUCKET, fname)
                 urllib.request.urlcleanup()
 
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
@@ -77,13 +77,13 @@ def images_in_progress():
                 fname = f'{img_id}-{f.filename}'
                 coco_fname = regex.to_json(fname)
                 img_url = f'{c.IN_PROGRESS_IMAGES}{fname}'
-                s3.upload_image(BytesIO(f_bytes), c.BUCKET, fname)
+                s3.upload_image(BytesIO(f_bytes), conf.BUCKET, fname)
                 coco_obj = coco.setup_coco(img_id, img_url, fname, coco_fname, sys.getsizeof(f_bytes))
                 s3.upload_coco(coco_fname)
                 files_with_coco.append({'image_url': img_url, 'coco': coco_obj})
             return jsonify(files_with_coco)
     # GET
-    coco_urls = s3.list_urls(c.BUCKET, c.PROGRESS_COCO)
+    coco_urls = s3.list_urls(conf.BUCKET, c.PROGRESS_COCO)
     via_annot_data = {}
     for url in coco_urls:
         with contextlib.closing(urllib.request.urlopen(url)) as coco_file:

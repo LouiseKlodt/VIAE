@@ -1,7 +1,8 @@
 from flask import json
 import datetime as dt 
 import re
-import constants.constants as constants
+import util.constants as constants
+import util.aws_config as conf
 import os
 from aws import s3client
 
@@ -55,8 +56,8 @@ def setup_coco(image_id, image_url, file_name, fname_json, file_size):
 
 def via_to_coco(via_label_data, coco_fname):
     coco_url = f'{constants.IN_PROGRESS_COCO}{coco_fname}'
-    coco = s3client.download_file(constants.BUCKET, f'in_progress_data/coco/{coco_fname}', f'viae/tmp/{coco_fname}')
-    categories_s3 = s3client.download_file(constants.BUCKET, f'categories.json', f'viae/tmp/cats.json')
+    coco = s3client.download_file(conf.BUCKET, f'in_progress_data/coco/{coco_fname}', f'viae/tmp/{coco_fname}')
+    categories_s3 = s3client.download_file(conf.BUCKET, f'categories.json', f'viae/tmp/cats.json')
 
     annotations = []
     for region in via_label_data['regions']:

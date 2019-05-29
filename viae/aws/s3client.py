@@ -3,8 +3,9 @@ from urllib.parse import urlparse
 
 import boto3
 import coco.coco as coco
-import constants.constants as c
-import constants.regex as regex
+import util.constants as c
+import util.aws_config as conf
+import util.regex as regex
 import datetime as dt 
 import os
 import re
@@ -16,7 +17,7 @@ s3client = boto3.client('s3')
 
 
 def inc_image_id():
-    s3.meta.client.download_file(c.BUCKET, f'{c.STATE_JSON}', 'viae/tmp/state.json')
+    s3.meta.client.download_file(conf.BUCKET, f'{conf.STATE_JSON}', 'viae/tmp/state.json')
     old_state_file = open('viae/tmp/state.json').read()
     state_ids = json.loads(old_state_file)
     old_img_id = state_ids['last_image_id']
@@ -29,13 +30,13 @@ def inc_image_id():
     with open('viae/tmp/state.json', 'w+') as new_state_file:
         new_state_file.write(json.dumps(state_ids))
     new_state_file.close()
-    s3.meta.client.upload_file('viae/tmp/state.json', c.BUCKET, f'{c.STATE_JSON}', ExtraArgs={'ACL':'public-read'})
+    s3.meta.client.upload_file('viae/tmp/state.json', conf.BUCKET, f'{conf.STATE_JSON}', ExtraArgs={'ACL':'public-read'})
     os.remove('viae/tmp/state.json')
     return new_img_id
 
 
 def inc_annot_id():
-    s3.meta.client.download_file(c.BUCKET, f'{c.STATE_JSON}', 'viae/tmp/state.json')
+    s3.meta.client.download_file(conf.BUCKET, f'{conf.STATE_JSON}', 'viae/tmp/state.json')
     old_state_file = open('viae/tmp/state.json').read()
     state_ids = json.loads(old_state_file)
     old_annot_id = state_ids['last_annotation_id']
@@ -48,7 +49,7 @@ def inc_annot_id():
     with open('viae/tmp/state.json', 'w+') as new_state_file:
         new_state_file.write(json.dumps(state_ids))
     new_state_file.close()
-    s3.meta.client.upload_file('viae/tmp/state.json', c.BUCKET, f'{c.STATE_JSON}', ExtraArgs={'ACL':'public-read'})
+    s3.meta.client.upload_file('viae/tmp/state.json', conf.BUCKET, f'{conf.STATE_JSON}', ExtraArgs={'ACL':'public-read'})
     os.remove('viae/tmp/state.json')
     return new_annot_id
 
@@ -58,12 +59,12 @@ def upload_image(fbytes, bucket, fname):
 
 
 def upload_coco(coco_fname):
-    s3.meta.client.upload_file(f'{c.tmp}{coco_fname}', c.BUCKET, f'{c.PROGRESS_COCO}{coco_fname}', ExtraArgs={'ACL':'public-read'})
+    s3.meta.client.upload_file(f'{c.tmp}{coco_fname}', conf.BUCKET, f'{c.PROGRESS_COCO}{coco_fname}', ExtraArgs={'ACL':'public-read'})
     os.remove(f'{c.tmp}{coco_fname}')
 
 
 def upload_file(source, dest):
-     s3.meta.client.upload_file(source, c.BUCKET, dest, ExtraArgs={'ACL':'public-read'})
+     s3.meta.client.upload_file(source, conf.BUCKET, dest, ExtraArgs={'ACL':'public-read'})
 
 
 def download_file(bucket, key, dest):
@@ -88,23 +89,23 @@ def list_urls(bucket, prefix):
 
 def move_to_destination(typ, filename, destination):
     copy_source = {
-        'Bucket': f'{c.BUCKET}',
+        'Bucket': f'{conf.BUCKET}',
         'Key': f'{c.IN_PROGRESS_FOLDER}/{typ}/{filename}'
     }
     s3.meta.client.copy_object(
             ACL='public-read',
-            Bucket=f'{c.BUCKET}',
+            Bucket=f'{conf.BUCKET}',
             CopySource=copy_source,
             Key=f'{destination}/{typ}/{filename}'
     )
     s3.meta.client.delete_object(
-        Bucket=f'{c.BUCKET}',
+        Bucket=f'{conf.BUCKET}',
         Key=f'{c.IN_PROGRESS_FOLDER}/{typ}/{filename}'
     )
     
 
 def delete_file(typ, fname):
     s3client.delete_object(
-        Bucket= c.BUCKET, 
+        Bucket= conf.BUCKET, 
         Key=f'{c.IN_PROGRESS_FOLDER}/{typ}/{fname}'
     )
