@@ -23,6 +23,7 @@ import urllib
 
 app = Flask(__name__)
 
+
 @app.route("/internal/health_check")
 def health_check():
     return "ok\n"
@@ -117,18 +118,11 @@ def submit_data(image_id):
 
     # POST: move labeling data to s3 validate_data
     via_label_data = json.loads(request.data)
-    print(via_label_data)
     img_url = via_label_data['filename']
     destination = via_label_data['destination']
-    print(destination)
     img_fname = regex.remove_prefix(img_url)
     coco_fname = regex.to_json(img_fname)
     coco_obj = coco.via_to_coco(via_label_data, coco_fname)
-
-    #progress_img_s3 = AwsS3Object(f'{const.s3_progress_images}{img_fname}')
-    #progress_coco_s3 = AwsS3Object(f'{const.s3_progress_coco}{coco_fname}')
-    #progress_coco_s3.upload_file(f'{const.tmp}{coco_fname}', extra_args={'ACL':'public-read'})
-    #os.remove(f'{const.tmp}{coco_fname}')
     s3.upload_file(f'{c.tmp}{coco_fname}', f'in_progress_data/coco/{coco_fname}')
 
     s3.move_to_destination('coco', coco_fname, destination)
@@ -150,12 +144,7 @@ def delete_data(image_id):
     coco_fname = regex.to_json(img_fname)
     s3.delete_file('images', img_fname)
     s3.delete_file('coco', coco_fname)
-    #progress_img_s3 = AwsS3Object(f'{const.s3_progress_images}{img_fname}')
-    #progress_coco_s3 = AwsS3Object(f'{const.s3_progress_coco}{coco_fname}')
-    #progress_img_s3.delete()
-    #progress_coco_s3.delete()
-
-    return jsonify({'image_url': img_url, 'coco': coco_fname}) # 204 OK ?
+    return jsonify({'image_url': img_url, 'coco': coco_fname})
 
 
 if __name__ == "__main__":
