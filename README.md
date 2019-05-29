@@ -6,6 +6,11 @@ VIAE is extending this as follows:
 - options to save progress of work and submit completed annotation data to S3
 - uses a standardised annotation format [COCO](http://cocodataset.org/#format-data)
 
+
+
+## Install
+1. pip3 install --upgrade -r requirements.txt 
+2.
 ## Running the application
 
 Run
