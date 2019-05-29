@@ -116,9 +116,10 @@ def submit_data(image_id):
 
     # POST: move labeling data to s3 validate_data
     via_label_data = json.loads(request.data)
+    print(via_label_data)
     img_url = via_label_data['filename']
     destination = via_label_data['destination']
-
+    print(destination)
     img_fname = regex.remove_prefix(img_url)
     coco_fname = regex.to_json(img_fname)
     coco_obj = coco.via_to_coco(via_label_data, coco_fname)

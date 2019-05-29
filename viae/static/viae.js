@@ -462,7 +462,7 @@ function viae_setup_user_input_panel(ok_handler, input, config, s3_image_id, pay
               '<label class="label_radio_btn" for="radio_btn_train">Train</label></span>');
     html.push('<span class="cell_radio_btn"><input class="radio_btn" value="test-data" type="radio" id="radio_btn_test" name="ds_radio">' + 
               '<label class="label_radio_btn" for="radio_btn_test">Test</label> </span>');
-    html.push('<span class="cell_radio_btn"><input class="radio_btn" value="validate-data" type="radio" id="radio_btn_validate" name="ds_radio" checked>' + 
+    html.push('<span class="cell_radio_btn"><input class="radio_btn" value="validate_data" type="radio" id="radio_btn_validate" name="ds_radio" checked>' + 
               '<label class="label_radio_btn" for="radio_btn_validate">Validate</label> </span>');
     html.push('</div>'); // end of row
   }
@@ -602,7 +602,7 @@ function viae_project_file_submit_confirmed(input) {
   var s3_img_url = input.filename.value;
   var filename = s3_img_url.replace(/.*\/([^\/]+)$/,'$1');
   var destinations = document.getElementsByName('ds_radio');
-  var destination = 'validate';
+  var destination = 'validate_data';
   for (var i in destinations) {
     if (destinations[i].checked) {
       destination = destinations[i].value;
