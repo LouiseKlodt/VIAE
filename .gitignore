@@ -1,6 +1,6 @@
 .idea
 *.pyc
-
+.DS_Store
 .vscode/
 my-venv
 __pycache__
